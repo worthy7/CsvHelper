@@ -340,6 +340,31 @@ namespace CsvHelper.Tests
 		}
 
 		[TestMethod]
+		public void TypeShouldBeInt()
+		{
+			var record = new TestRecord
+			{
+				IntColumn = 1,
+			};
+			var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+			{
+				ShouldQuote = args =>
+				{
+					Assert.AreEqual(args.FieldType, typeof(int));
+					return ConfigurationFunctions.ShouldQuote(args); ;
+				},
+				HasHeaderRecord = false
+			};
+
+			using (var writer = new StreamWriter(new FileStream("test", FileMode.OpenOrCreate), System.Text.Encoding.UTF8))
+			using (var csvw = new CsvWriter(writer, config))
+			{
+				//csvw.Context.RegisterClassMap<TestRecordMap>();
+				csvw.WriteRecords(new List<TestRecord>() { record });
+			}
+		}
+
+		[TestMethod]
 		public void WriteRecordsNoFieldsQuotedTest()
 		{
 			var record = new TestRecord
